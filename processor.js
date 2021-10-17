@@ -40,7 +40,7 @@ class WasmProcessor extends AudioWorkletProcessor {
 
   process(inputs, outputs, parameters) {
     // for simplicity, only one output and one channel, and
-    // constant frequency during call back
+    // constant frequency during callback
     const out = outputs[0][0];
     const freq = parameters.freq[0];
 
