@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>wasm</title>
+    <meta charset="utf-8" />
+    <style> input, output { vertical-align: middle; } </style>
+  </head>
+
+  <body>
+    <div>
+      <label for="freq">frequency:</label>
+      <input type="range" id="freq" min="0" max="1000" value="440" />
+      <output id="display">440</output>
+    </div>
+    <button id="play">play</button>
+
+    <script type="module">
+      // we cannot fetch resources in an AudioWorkletProcessor,
+      // nor can we pass instantiatiated wasm to audio thread.
+      // one solution is to compile wasm first, pass the compiled
+      // result to audio thread using processorOptions, then
+      // do the actual instantiatiation within audio thread.
+      let wasm = await WebAssembly.compileStreaming(fetch("sine.wasm"))
+
+      // everything else is standard audio worklet setup
+      const ac = new AudioContext();
+      // must load module from an external file
+      await ac.audioWorklet.addModule("./processor.js");
+      const wasmNode = new AudioWorkletNode(ac, "wasm", {
+        processorOptions: {
+          wasm: wasm
+        }
+      });
+      //
+      // +------+   +-----+
+      // | wasm +-->| out |
+      // +------+   +-----+
+      //
+      wasmNode.connect(ac.destination);
+
+      // chrome will not play the audio context without user
+      // intervention
+      ac.suspend(); // make firefox consistent with chrome
+      const playBtn = document.getElementById("play");
+      playBtn.addEventListener("click", () => {
+        if (ac.state === "suspended") ac.resume();
+      });
+
+      // parameter handling
+      const freqParam = wasmNode.parameters.get("freq");
+      const freqSlider = document.getElementById("freq");
+      const display = document.getElementById("display");
+      // set default value. slider might not be in the
+      // default position after refresh
+      freqParam.value = freqSlider.value;
+      display.value = freqSlider.value;
+      // change freq on slider change
+      freqSlider.addEventListener("input", (e) => {
+        freqParam.value = e.currentTarget.value;
+        display.value = e.currentTarget.value;
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+*
+!*/
+
+!.gitignore
+!*.c
+!*.html
+!*.js
+!Makefile
+!README
+!UNLICENSE

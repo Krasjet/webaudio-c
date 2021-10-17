@@ -1,0 +1,58 @@
+webaudio-c
+==========
+
+A simple WebAudio sine oscillator using WASM compiled from C.
+
+Probably the simplest example for using WASM in WebAudio. No
+C++, no Rust, no Emscripten wrapper, just plain C and some
+JavaScript. Works on the latest version of both Firefox and
+Chrome.
+
+Build
+-----
+
+You must have Emscripten [1] installed to build the example.
+You technically only need Clang and WASI [2], but emcc will
+make your life much easier.
+
+If you are using ArchLinux or macOS, there are binary
+packages available:
+
+  ArchLinux:
+
+    $ pacman -S emscripten
+
+  macOS:
+
+    $ brew install emscripten
+
+Otherwise follow the documentation to install it [3].
+
+Then run
+
+  $ make
+
+to build the WASM module.
+
+Test
+----
+
+To test the webpage locally, you *must* set up a local
+server in the current directory to get over the cross-origin
+resource sharing restriction [4] imposed by modern browsers.
+
+To do this, you can use the built-in HTTP server in Python:
+
+  $ python3 -m http.server 8000
+
+This creates a local HTTP server on port 8000. Then go to
+the URL
+
+  http://localhost:8000
+
+in the browser.
+
+[1]: https://emscripten.org/
+[2]: https://wasi.dev/
+[3]: https://emscripten.org/docs/getting_started/downloads.html
+[4]: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
