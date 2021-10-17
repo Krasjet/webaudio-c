@@ -5,6 +5,7 @@
 !*.c
 !*.html
 !*.js
+!*.wasm
 !Makefile
 !README
 !UNLICENSE
